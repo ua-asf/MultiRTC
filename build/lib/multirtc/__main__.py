@@ -1,7 +1,6 @@
 import argparse
-import time
 
-from multirtc import create_dem, dem, geocode, multirtc
+from multirtc import dem, geocode, multirtc
 from multirtc.multimetric import ale, point_target, rle
 
 
@@ -22,9 +21,6 @@ def main():
     dem_parser = dem.create_parser(subparsers.add_parser('prepdem', help=dem.__doc__))
     dem_parser.set_defaults(func=dem.run)
 
-    createdem_parser = create_dem.create_parser(subparsers.add_parser('createdem', help=create_dem.__doc__))
-    createdem_parser.set_defaults(func=create_dem.run)
-
     ale_parser = ale.create_parser(subparsers.add_parser('ale', help=ale.__doc__))
     ale_parser.set_defaults(func=ale.run)
 
@@ -35,11 +31,7 @@ def main():
     pt_parser.set_defaults(func=point_target.run)
 
     args = global_parser.parse_args()
-    start_time = time.perf_counter()
     args.func(args)
-    end_time = time.perf_counter()
-    elapsed_time = (end_time - start_time) / 60.0
-    print(f'The code block executed in {elapsed_time:.4f} minutes')
 
 
 if __name__ == '__main__':

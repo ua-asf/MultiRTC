@@ -1,4 +1,4 @@
-FROM condaforge/mambaforge:latest as builder
+FROM condaforge/mambaforge:latest AS builder
 
 ARG DEBIAN_FRONTEND=noninteractive
 ENV PYTHONDONTWRITEBYTECODE=true
@@ -33,7 +33,8 @@ RUN mamba env create -f ./multirtc/environment.isce3.yml && \
     make install && \
     cd ../..
 
-FROM condaforge/mambaforge:latest as runner
+
+FROM condaforge/mambaforge:latest AS runner
 
 # For opencontainers label definitions, see:
 #    https://github.com/opencontainers/image-spec/blob/master/annotations.md
@@ -74,9 +75,10 @@ RUN mkdir -p ./isce3/isce3_install
 
 COPY --chown=${CONDA_UID}:${CONDA_GID} --from=builder /home/conda/isce3/isce3_install /home/conda/isce3/isce3_install
 
-ENV PATH=/home/conda/isce3/isce3_install/bin:/home/conda/isce3/isce3_install/packages/nisar/workflows:$PATH \
-    PYTHONPATH=/home/conda/isce3/isce3_install/packages:/home/conda/isce3/isce3_install/lib:$PYTHONPATH \
-    LD_LIBRARY_PATH=/home/conda/isce3/isce3_install/lib:$LD_LIBRARY_PATH \
+ENV ISCE_INSTALL=/home/conda/isce3/isce3_install
+ENV PATH=$ISCE_INSTALL/bin:$ISCE_INSTALL/packages/nisar/workflows/:$PATH \
+    PYTHONPATH=$ISCE_INSTALL/packages:$ISCE_INSTALL/lib:$PYTHONPATH \
+    LD_LIBRARY_PATH=$ISCE_INSTALL/lib:$LD_LIBRARY_PATH \
     GDAL_VRT_ENABLE_PYTHON=YES
 
 ENTRYPOINT ["/home/conda/multirtc/src/multirtc/etc/entrypoint.sh"]

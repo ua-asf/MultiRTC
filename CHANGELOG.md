@@ -6,6 +6,56 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [PEP 440](https://www.python.org/dev/peps/pep-0440/)
 and uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.3]
+#### Fixed
+* correly calcualte the min and max values of the dem raster to produce geogrid, largely imporve the RTC process speed.
+
+## [0.7.2]
+### Fixed
+* clip the RTC output of UMBRA to the shape of what is defined in the json file. 
+
+## [0.7.1]
+
+### Fixed
+* Adjusted parameters so Hyp3 works.
+
+## [0.7.0]
+
+### update
+* Added ability to run in Hyp3
+
+## [0.6.0]
+
+### update
+* split producing DEM file and producing RTC file into two separate parts 
+
+
+## [0.5.7]
+
+### Fixed
+* modify the RTC in db file by setting -100 to be np.nan
+
+## [0.5.6]
+
+### Fixed
+* fill the gaps in the DEM file that is mosaic of the Geodata DEM tile files.
+* download the Geodata DEM tile files from s3 if it is not in the local space.
+
+## [0.5.5]
+
+### Fixed
+* change 30m DEM resource URL to https://asf-dem-west.s3.amazonaws.com/v2/COP30/2021
+
+## [0.5.4]
+
+### Fixed
+* implemented the subset for range-zero-doppler format data.
+
+## [0.5.3]
+
+### Fixed
+* modify the Dockerfile to merge the compile isce3 and multirtc in one conda env.
+
 ## [0.5.2]
 
 ### Fixed
@@ -40,6 +90,7 @@ and uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 * Utilities for assessing absolute/relative location error, and point target characteristics of output products.
+
 ## [0.3.3]
 
 ### Changed

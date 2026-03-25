@@ -16,7 +16,6 @@ from multirtc.fetch import download_file
 
 gdal.UseExceptions()
 URL = 'https://nisar.asf.earthdatacloud.nasa.gov/STATIC/DEM/v1.1/EPSG4326'
-
 EGM2008_GEOID = {
     'WORLD': [
         '/vsicurl/https://asf-dem-west.s3.amazonaws.com/GEOID/us_nga_egm2008_1.tif',
@@ -179,7 +178,6 @@ def download_opera_dem_for_footprint(output_path: Path, footprint: Polygon, buff
         executor.map(lambda url: download_file(url, str(output_dir)), urls)
 
     # [download_file(url, str(output_dir)) for url in urls]
-
     vrt_filepath = output_dir / 'dem.vrt'
     input_files = [str(output_dir / Path(url).name) for url in urls]
     gdal.BuildVRT(str(output_dir / 'dem.vrt'), input_files)

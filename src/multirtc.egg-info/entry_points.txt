@@ -1,0 +1,2 @@
+[console_scripts]
+multirtc = multirtc.__main__:main

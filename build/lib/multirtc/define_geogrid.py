@@ -1,11 +1,12 @@
-from pathlib import Path
-
-import geopandas as gpd
 import isce3
 import numpy as np
+from shapely.geometry import Polygon, box
+import pyproj
 import rasterio
 from rasterio.mask import mask
-from shapely.geometry import Polygon, box
+import geopandas as gpd
+from pathlib import Path
+from multirtc.sicd import SicdRzdSlc, SicdPfaSlc
 
 
 def get_point_epsg(lat: float, lon: float) -> int:
@@ -136,9 +137,15 @@ def generate_geogrids(
         min_height = isce3.core.MINIMUM_HEIGHT
         max_height = isce3.core.MAXIMUM_HEIGHT
     else:
-        with rasterio.open(str(dem_path)) as src:
-            min_height = (src.stats()[0]).min
-            max_height = (src.stats()[0]).max
+        dem_raster = isce3.io.Raster(str(dem_path))
+        dem = isce3.geometry.DEMInterpolator()
+        # FIXME: figure out why load with bounds doesn't work
+        # minx, miny, maxx, maxy = slc.footprint.bounds
+        # dem.load_dem(dem_raster, min_x=minx, max_x=maxx, min_y=miny, max_y=maxy)
+        dem.load_dem(dem_raster)
+        dem.compute_min_max_mean_height()
+        min_height = dem.min_height
+        max_height = dem.max_height
 
     geogrid = isce3.product.bbox_to_geogrid(
         slc.radar_grid,
@@ -156,7 +163,7 @@ def generate_geogrids(
 
 def bbox84_to_bboxlocal(bbox, dst_epsg: int):
     poly = box(*bbox)
-    gdf84 = gpd.GeoSeries([poly], crs='EPSG:4326')
+    gdf84 = gpd.GeoSeries([poly], crs=f'EPSG:4326')
     gdf_src = gdf84.to_crs(f'EPSG:{dst_epsg}')
     poly = gdf_src.iloc[0]
     poly = box(*poly.bounds)
@@ -167,7 +174,7 @@ def bbox84_to_ploy_in_same_crs_as_reffile(bbox: list, reffile: str):
     with rasterio.open(reffile) as ds:
         dst_epsg = ds.crs.to_epsg()
         poly = box(*bbox)
-        gdf84 = gpd.GeoSeries([poly], crs='EPSG:4326')
+        gdf84 = gpd.GeoSeries([poly], crs=f'EPSG:4326')
         gdf_src = gdf84.to_crs(f'EPSG:{dst_epsg}')
         poly = gdf_src.iloc[0]
 
@@ -243,52 +250,6 @@ def generate_geogrids_via_bbox(slc, spacing_meters: float, epsg: int, bbox: list
         width=int(width),
         epsg=epsg,
     )
-
-    geogrid_snapped = snap_geogrid(geogrid, geogrid.spacing_x, geogrid.spacing_y)
-
-    return geogrid_snapped
-
-
-def generate_geogrids_via_bbox2(
-    slc, spacing_meters: float, epsg: int, dem_path: str, bbox: list
-) -> isce3.product.GeoGridParameters:
-    """Computer a geogrid based on bbox, spacing_meters, and epsg
-
-    Args:
-        slc: Slc-derived object containing radar grid, orbit, and doppler centroid grid.
-        spacing_meters: Spacing in meters for the geogrid.
-        epsg: EPSG code for the coordinate reference system.
-        bbox: [min_lon, min_lat, max_lon, max_lat]
-    Returns:
-        A geogrid object with the specified spacing.
-    """
-
-    poly = bbox84_to_ploy_in_same_crs_as_reffile(bbox, dem_path)
-
-    clip_dem(dem_path, poly, '/tmp/clipped_dem.tif')
-
-    dem_raster = isce3.io.Raster('/tmp/clipped_dem.tif')
-    dem = isce3.geometry.DEMInterpolator()
-    dem.load_dem(dem_raster)
-    dem.compute_min_max_mean_height()
-    min_height = dem.min_height
-    max_height = dem.max_height
-
-    x_spacing = spacing_meters
-    y_spacing = -1 * np.abs(spacing_meters)
-
-    geogrid = isce3.product.bbox_to_geogrid(
-        slc.radar_grid,
-        slc.orbit,
-        slc.doppler_centroid_grid,
-        x_spacing,
-        y_spacing,
-        epsg,
-        min_height=min_height,
-        max_height=max_height,
-    )
-
-    Path('/tmp/clipped_dem.tif').unlink()
 
     geogrid_snapped = snap_geogrid(geogrid, geogrid.spacing_x, geogrid.spacing_y)
 

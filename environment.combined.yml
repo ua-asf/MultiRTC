@@ -1,0 +1,67 @@
+name: multirtc
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  # For building isce3
+  # build
+  - cxx-compiler
+  - make
+  - cmake>=3.23
+  - ninja
+  - pybind11
+  - python==3.11.5
+  - numpy>=1.20
+  # host
+  - eigen
+  - fftw
+  - gdal>=3.0
+  - gmock
+  - gtest
+  - hdf5
+  - libgdal-core
+  - libgdal-hdf5
+  - libgdal-netcdf
+  - pysolid
+  - pyre>=1.12.1,<=1.13.0
+  # needed for ctests in build.sh
+  - h5py
+  - pytest
+  - ruamel.yaml
+  - scipy
+  - shapely
+  - yamale
+  # For multirtc
+  # For running
+  - pip
+  - isce3
+  - boto3
+  - requests
+  - lxml
+  - shapely
+  - pyproj
+  - s1reader>=0.2.5
+  - sarpy
+  - burst2safe
+  - tqdm
+  - requests
+  - urllib3
+  - geojson
+  - geopandas
+  - rasterio
+  - pystac-client
+  - pdal
+  # For multimetric
+  - matplotlib
+  - pandas
+  - lmfit
+  - scipy
+  - scikit-image
+  # For packaging, and testing
+  - setuptools
+  - setuptools_scm
+  - wheel
+  - pytest
+  - pytest-console-scripts
+  - pytest-cov
+  - ruff

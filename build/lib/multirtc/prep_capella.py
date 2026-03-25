@@ -1,16 +1,17 @@
 from pathlib import Path
+from typing import Optional
 
 from osgeo import gdal
 
 from multirtc import dem
-from multirtc.dem2 import process_dem
 from multirtc.sicd import SicdRzdSlc
 
+from multirtc.dem2 import process_dem
 
 gdal.UseExceptions()
 
 
-def prep_capella(granule_path: Path, work_dir: Path | None) -> Path:
+def prep_capella(granule_path: Path, work_dir: Optional[Path] = None) -> Path:
     """Prepare data for burst-based processing.
 
     Args:

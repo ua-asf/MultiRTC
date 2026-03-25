@@ -464,8 +464,8 @@ def rtc(slc, geogrid, opts):
     )
     radar_grid = slc.radar_grid
     orbit = slc.orbit
-    # wavelength = slc.wavelength
-    # lookside = radar_grid.lookside
+    wavelength = slc.wavelength
+    lookside = radar_grid.lookside
 
     dem_raster = isce3.io.Raster(opts.dem_path)
     ellipsoid = isce3.core.Ellipsoid()

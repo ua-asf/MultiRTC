@@ -4,40 +4,38 @@ channels:
   - nodefaults
 dependencies:
   # For running
-  - python>=3.10
-  - pip
-  - gdal>=3.0
-  - numpy>=1.20
-  - isce3
+  - python==3.13.5
   - boto3
-  - requests
-  - lxml
-  - shapely
-  - pyproj
-  - s1reader>=0.2.5
-  - sarpy
   - burst2safe
-  - tqdm
-  - requests
-  - urllib3
-  - hyp3lib
-  - dask
+  - gdal>=3.0
   - geojson
   - geopandas
-  - rasterio
+  - hyp3lib>=3,<4
+  - isce3
+  - lxml
+  - numpy>=1.20
+  - pip
+  - pyproj
   - pystac-client
+  - rasterio
+  - requests
+  - requests
+  - s1reader>=0.2.5
+  - sarpy
+  - shapely
+  - tqdm
+  - urllib3
   # For multimetric
+  - lmfit
   - matplotlib
   - pandas
-  - lmfit
-  - scipy
   - scikit-image
-  - pdal
+  - scipy
   # For packaging, and testing
-  - setuptools
-  - setuptools_scm
-  - wheel
   - pytest
   - pytest-console-scripts
   - pytest-cov
   - ruff
+  - setuptools
+  - setuptools_scm
+  - wheel
